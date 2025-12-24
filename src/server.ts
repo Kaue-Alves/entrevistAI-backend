@@ -1,24 +1,19 @@
-import fastify from "fastify";
-import 'dotenv/config';
+import "dotenv/config";
+import { construirApp } from "./app.ts";
 
-const app = fastify()
+const PORTA = Number(process.env.PORT) || 3000;
+const HOST = process.env.HOST || "0.0.0.0";
 
-interface DefinirEntrevistadorBody {
-  prompt: string
+async function iniciarServidor() {
+    const app = construirApp();
+
+    try {
+        await app.listen({ port: PORTA, host: HOST });
+        console.log(`🚀 Servidor HTTP rodando em http://localhost:${PORTA}`);
+    } catch (erro) {
+        console.error("Erro ao iniciar servidor:", erro);
+        process.exit(1);
+    }
 }
 
-app.post<{ Body: DefinirEntrevistadorBody }>('/definir-entrevistador', async (req, res) => {
-    console.log(req.body)
-
-    const prompt = req.body.prompt
-    // const response = await main(prompt)
-
-    // return res.send(response)
-})
-
-app.listen({
-    port: Number(process.env.PORT) || 3000,
-}).then(() => {
-    console.log('HTTP server running on http://localhost:3000')
-})
-
+iniciarServidor();
